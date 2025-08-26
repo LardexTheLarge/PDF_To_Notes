@@ -1,4 +1,5 @@
 import fitz
+import json
 import requests
 
 def extract_text_from_pdf(pdf_path):
@@ -24,11 +25,24 @@ def chunk_text(text, max_tokens=1000):
     return chunks
 
 def summarize_chunk(chunk):
-    response = requests.post(
-        "http://localhost:11434/api/generate",
-        json={
+    url="http://localhost:11434/api/generate"
+    payload={
             "model": "gpt-oss:20b",
-            "prompt": f"Summarize the following text into concise notes:\n\n{chunk}",
-            "stream": False
-        }
-    )
+            "prompt": f"Write detailed notes about each numbered section in the following text:\n\n{chunk}",
+            "stream": True
+    }
+
+    response_text = ""
+
+    with requests.post(url, json=payload, stream=True) as response:
+        for line in response.iter_lines():
+            if line:
+                try:
+                    data = json.loads(line.decode("utf-8"))
+                    token = data.get("response", "")
+                    print(token, end="", flush=True)
+                    response_text += token
+                except json.JSONDecoderError:
+                    print("\n[Stream chunk decode error]")
+
+    return response_text
