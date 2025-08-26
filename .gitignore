@@ -3,8 +3,10 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+notes.md
 Resume of Gabriel Vasquez.pdf
 Resodo Mutual NDA SIGNED.pdf
+CO_CDL_23.pdf
 # C extensions
 *.so
 
