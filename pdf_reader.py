@@ -13,7 +13,7 @@ def extract_text_from_pdf(pdf_path, page_numbers=None):
         _type_: The selected text from the pdf.
     """
     doc = fitz.open(pdf_path)
-    text = ""
+    chunks = []
 
     if page_numbers is None:
         page_numbers = range(len(doc))
@@ -21,31 +21,17 @@ def extract_text_from_pdf(pdf_path, page_numbers=None):
     for page_num in page_numbers:
         if 0 <= page_num < len(doc):
             page = doc[page_num]
-            text += page.get_text()
+            page_text = page.get_text()
+            chunks.append(page_text)
         else:
             print(f"Warning: Page {page_num} is out of range.")
-    return text
-
-def chunk_text(text, max_tokens=1000):
-    paragraphs = text.split('\n')
-    chunks = []
-    current_chunk = []
-
-    for para in paragraphs:
-        if len(current_chunk) + len(para) < max_tokens:
-            current_chunk += para + "\n"
-        else:
-            chunks.append(current_chunk)
-            current_chunk = para + "\n"
-    if current_chunk:
-        chunks.append(current_chunk)
     return chunks
 
 def summarize_chunk(chunk):
     url="http://localhost:11434/api/generate"
     payload={
             "model": "gpt-oss:20b",
-            "prompt": f"Write simple notes about each major section in the following text:\n\n{chunk}",
+            "prompt": f"Write basic notes about the following text:\n\n{chunk}",
             "stream": True
     }
 

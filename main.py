@@ -1,7 +1,6 @@
 import pdf_reader
 
-pdf_text = pdf_reader.extract_text_from_pdf("CO_CDL_23.pdf", page_numbers=range(5,16))
-chunks = pdf_reader.chunk_text(pdf_text)
+chunks = pdf_reader.extract_text_from_pdf("CO_CDL_23.pdf", page_numbers=range(5,6))
 
 notes = []
 
